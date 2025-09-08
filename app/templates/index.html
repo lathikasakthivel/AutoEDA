@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoEDA - Deep Learning Powered EDA Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+        }
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+        .upload-area {
+            text-align: center;
+            padding: 40px;
+            cursor: pointer;
+        }
+        .upload-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .file-input {
+            display: none;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .analysis-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .progress-section {
+            margin: 20px 0;
+        }
+        .progress {
+            height: 25px;
+            border-radius: 15px;
+            background: #e9ecef;
+        }
+        .progress-bar {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 15px;
+        }
+        .results-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .feature-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        .alert {
+            border-radius: 15px;
+            border: none;
+        }
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fas fa-brain"></i> AutoEDA</h1>
+                <p>Deep Learning Powered Exploratory Data Analysis Assistant</p>
+                <p class="text-muted">Upload your sequential dataset and get instant insights with AI-powered analysis</p>
+            </div>
+
+            <!-- Features Overview -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <h5>Trend Analysis</h5>
+                        <p>AI-powered pattern recognition</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <h5>Anomaly Detection</h5>
+                        <p>LSTM-based outlier detection</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-eye"></i></div>
+                        <h5>Feature Importance</h5>
+                        <p>Attention mechanism insights</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-magic"></i></div>
+                        <h5>Synthetic Data</h5>
+                        <p>AI-generated data for testing</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="upload-section">
+                <h3 class="text-center mb-4"><i class="fas fa-upload"></i> Upload Your Dataset</h3>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h4>Click to upload or drag and drop</h4>
+                    <p class="text-muted">Supports CSV, XLSX, JSON, and Parquet files</p>
+                    <p class="text-muted">Maximum file size: 100MB</p>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.json,.parquet">
+                
+                <div class="text-center mt-3">
+                    <button class="btn btn-primary" onclick="uploadFile()" id="uploadBtn" disabled>
+                        <i class="fas fa-rocket"></i> Start Analysis
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analysis Progress Section -->
+            <div class="analysis-section" id="analysisSection" style="display: none;">
+                <h3 class="text-center mb-4"><i class="fas fa-cogs"></i> Analysis in Progress</h3>
+                <div class="progress-section">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: 0%" id="progressBar"></div>
+                    </div>
+                    <p class="text-center mt-2" id="progressText">Initializing...</p>
+                </div>
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Processing your data...</p>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3 class="text-center mb-4"><i class="fas fa-chart-bar"></i> Analysis Results</h3>
+                
+                <!-- Data Overview -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5><i class="fas fa-info-circle"></i> Dataset Overview</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="dataOverview"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5><i class="fas fa-chart-pie"></i> Data Quality</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="dataQuality"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Results -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h5><i class="fas fa-search"></i> Analysis Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="analysisResults"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualizations -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h5><i class="fas fa-chart-line"></i> Interactive Visualizations</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="visualizations"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Section -->
+                <div class="text-center">
+                    <button class="btn btn-success btn-lg" onclick="downloadResults()">
+                        <i class="fas fa-download"></i> Download Complete Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>&copy; 2024 AutoEDA. Powered by Deep Learning and AI.</p>
+                <p>Built with Flask, TensorFlow, and modern web technologies</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        let currentFile = null;
+        let analysisResults = null;
+
+        // File input change handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                currentFile = file;
+                document.getElementById('uploadBtn').disabled = false;
+                
+                // Show file info
+                const uploadArea = document.querySelector('.upload-area');
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4>${file.name}</h4>
+                    <p class="text-muted">Size: ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    <p class="text-muted">Type: ${file.type || 'Unknown'}</p>
+                `;
+            }
+        });
+
+        // Upload and analyze file
+        async function uploadFile() {
+            if (!currentFile) return;
+
+            const formData = new FormData();
+            formData.append('file', currentFile);
+
+            // Show analysis section
+            document.getElementById('analysisSection').style.display = 'block';
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('uploadBtn').disabled = true;
+
+            try {
+                // Upload file
+                const uploadResponse = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error('Upload failed');
+                }
+
+                const uploadResult = await uploadResponse.json();
+                
+                // Start analysis
+                const analysisResponse = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        filename: uploadResult.filename
+                    })
+                });
+
+                if (!analysisResponse.ok) {
+                    throw new Error('Analysis failed');
+                }
+
+                const analysisResult = await analysisResponse.json();
+                analysisResults = analysisResult;
+
+                // Simulate progress updates
+                simulateProgress();
+
+                // Show results
+                setTimeout(() => {
+                    showResults(analysisResult);
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred during analysis: ' + error.message);
+            }
+        }
+
+        // Simulate progress updates
+        function simulateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            let progress = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                
+                if (progress < 25) {
+                    progressText.textContent = 'Loading and preprocessing data...';
+                } else if (progress < 50) {
+                    progressText.textContent = 'Training LSTM autoencoder...';
+                } else if (progress < 75) {
+                    progressText.textContent = 'Detecting anomalies...';
+                } else if (progress < 100) {
+                    progressText.textContent = 'Generating visualizations...';
+                } else {
+                    progressText.textContent = 'Analysis complete!';
+                    clearInterval(interval);
+                }
+            }, 500);
+        }
+
+        // Show analysis results
+        function showResults(results) {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Populate data overview
+            if (results.data_summary) {
+                document.getElementById('dataOverview').innerHTML = `
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr><td><strong>Rows:</strong></td><td>${results.data_summary.rows}</td></tr>
+                            <tr><td><strong>Columns:</strong></td><td>${results.data_summary.columns}</td></tr>
+                            <tr><td><strong>Memory Usage:</strong></td><td>${results.data_summary.memory_usage}</td></tr>
+                            <tr><td><strong>Data Types:</strong></td><td>${results.data_summary.data_types}</td></tr>
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            // Populate data quality
+            if (results.data_quality) {
+                document.getElementById('dataQuality').innerHTML = `
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr><td><strong>Missing Values:</strong></td><td>${results.data_quality.missing_values}</td></tr>
+                            <tr><td><strong>Duplicates:</strong></td><td>${results.data_quality.duplicates}</td></tr>
+                            <tr><td><strong>Completeness:</strong></td><td>${results.data_quality.completeness}%</td></tr>
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            // Populate analysis results
+            if (results.anomaly_results) {
+                document.getElementById('analysisResults').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Anomaly Detection</h6>
+                            <p><strong>Anomalies Found:</strong> ${results.anomaly_results.n_anomalies}</p>
+                            <p><strong>Anomaly Rate:</strong> ${(results.anomaly_results.anomaly_rate * 100).toFixed(2)}%</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Model Performance</h6>
+                            <p><strong>Reconstruction Error:</strong> ${results.anomaly_results.avg_reconstruction_error.toFixed(4)}</p>
+                            <p><strong>Training Time:</strong> ${results.anomaly_results.training_time.toFixed(2)}s</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Show visualizations
+            if (results.visualizations) {
+                let vizHtml = '<div class="row">';
+                Object.entries(results.visualizations).forEach(([name, path]) => {
+                    vizHtml += `
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>${name.replace(/_/g, ' ').toUpperCase()}</h6>
+                                </div>
+                                <div class="card-body">
+                                    <iframe src="${path}" width="100%" height="400" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                vizHtml += '</div>';
+                document.getElementById('visualizations').innerHTML = vizHtml;
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.querySelector('.main-container').insertBefore(alertDiv, document.querySelector('.header'));
+        }
+
+        // Download results
+        function downloadResults() {
+            if (analysisResults && analysisResults.filename) {
+                window.open(`/download/${analysisResults.filename}`, '_blank');
+            }
+        }
+
+        // Drag and drop functionality
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.style.background = '#e3f2fd';
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#dee2e6';
+            uploadArea.style.background = '#f8f9fa';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#dee2e6';
+            uploadArea.style.background = '#f8f9fa';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                currentFile = files[0];
+                document.getElementById('uploadBtn').disabled = false;
+                
+                // Show file info
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4>${files[0].name}</h4>
+                    <p class="text-muted">Size: ${(files[0].size / 1024 / 1024).toFixed(2)} MB</p>
+                    <p class="text-muted">Type: ${files[0].type || 'Unknown'}</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
